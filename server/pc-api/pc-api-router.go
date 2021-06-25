@@ -1,11 +1,12 @@
 package pc_api
 
 import (
-	"time"
-
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
+	"github.com/kataras/iris/core/router"
 	"github.com/peterq/pan-light/server/artisan"
 	"github.com/peterq/pan-light/server/pc-api/middleware"
+	"time"
 )
 
 func Init(app *iris.Application) {
@@ -17,7 +18,7 @@ func Init(app *iris.Application) {
 	pc.Use(artisan.Throttle(artisan.ThrottleOption{ // 防止攻击
 		Duration: time.Second * 5,
 		Number:   20,
-		GetKey: func(ctx iris.Context) string {
+		GetKey: func(ctx context.Context) string {
 			return "pc.api." + middleware.ContextLoginInfo(ctx).Uk()
 		},
 	}))
@@ -25,17 +26,17 @@ func Init(app *iris.Application) {
 }
 
 // 需要登录的api
-func pcAuthRoutes(r iris.Party) {
+func pcAuthRoutes(r router.Party) {
 
 	post := func(path string, handlers ...interface{}) {
-		var hs []iris.Handler
+		var hs []context.Handler
 		for _, h := range handlers {
-			if fn, ok := h.(func(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error)); ok {
+			if fn, ok := h.(func(ctx context.Context, param artisan.JsonMap) (result interface{}, err error)); ok {
 				hs = append(hs, artisan.ApiHandler(fn))
 			} else if o, ok := h.(artisan.ThrottleOption); ok {
 				hs = append(hs, artisan.Throttle(o))
 			} else {
-				hs = append(hs, h.(iris.Handler))
+				hs = append(hs, h.(context.Handler))
 			}
 		}
 		r.Post(path, hs...)

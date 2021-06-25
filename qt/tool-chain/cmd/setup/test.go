@@ -49,18 +49,18 @@ func Test(target string, docker, vagrant bool, vagrantsystem string) {
 	if utils.CI() {
 		mode = "build"
 		examples = map[string][]string{
-			"androidextras": {"jni", "notification"},
+			"androidextras": []string{"jni", "notification"},
 
-			"canvas3d": {"framebuffer", "interaction", "jsonmodels",
+			"canvas3d": []string{"framebuffer", "interaction", "jsonmodels",
 				"quickitemtexture", "textureandlight",
 				filepath.Join("threejs", "cellphone"),
 				filepath.Join("threejs", "oneqt"),
 				filepath.Join("threejs", "planets"),
 			},
 
-			"charts": {"audio"},
+			"charts": []string{"audio"},
 
-			"common": {"qml_demo", "widgets_demo"},
+			"common": []string{"qml_demo", "widgets_demo"},
 
 			//"grpc": []string{"hello_world","hello_world2"},
 
@@ -68,7 +68,7 @@ func Test(target string, docker, vagrant bool, vagrantsystem string) {
 
 			//opengl: []string{"2dpainting"},
 
-			"qml": {"adding", "application", "drawer_nav_x",
+			"qml": []string{"adding", "application", "drawer_nav_x",
 				filepath.Join("extending", "chapter1-basics"),
 				filepath.Join("extending", "chapter2-methods"),
 				filepath.Join("extending", "chapter3-bindings"),
@@ -84,39 +84,39 @@ func Test(target string, docker, vagrant bool, vagrantsystem string) {
 				//filepath.Join("printslides", "cmd", "printslides"),
 				"prop", "prop2" /*"quickflux", "webview"*/},
 
-			"qt3d": {"audio-visualizer-qml"},
+			"qt3d": []string{"audio-visualizer-qml"},
 
-			"quick": {"bridge", "bridge2", "calc", "dialog", "dynamic",
+			"quick": []string{"bridge", "bridge2", "calc", "dialog", "dynamic",
 				"hotreload", "listview", "sailfish", "tableview", "translate", "view"},
 
-			"sailfish": {"listview", "listview_variant"},
+			"sailfish": []string{"listview", "listview_variant"},
 
-			"showcases": {"sia"},
+			"showcases": []string{"sia"},
 
-			"sql": {"masterdetail", "masterdetail_qml", "querymodel"},
+			"sql": []string{"masterdetail", "masterdetail_qml", "querymodel"},
 
-			"uitools": {"calculator"},
+			"uitools": []string{"calculator"},
 
-			"webchannel": {"chatserver-go" /*"standalone" "webview"*/},
+			"webchannel": []string{"chatserver-go" /*"standalone" "webview"*/},
 
-			"widgets": {"bridge2" /*"dropsite"*/, "graphicsscene", "line_edits", "pixel_editor",
+			"widgets": []string{"bridge2" /*"dropsite"*/, "graphicsscene", "line_edits", "pixel_editor",
 				/*"renderer"*/ "share", "systray" /*"table"*/, "textedit", filepath.Join("treeview", "treeview_dual"),
 				filepath.Join("treeview", "treeview_filelist"), "video_player" /*"webengine"*/, "xkcd"},
 		}
 	} else {
 		if strings.HasPrefix(target, "sailfish") {
 			examples = map[string][]string{
-				"quick": {"sailfish"},
+				"quick": []string{"sailfish"},
 
-				"sailfish": {"listview", "listview_variant"},
+				"sailfish": []string{"listview", "listview_variant"},
 			}
 		} else {
 			examples = map[string][]string{
-				"qml": {"application", "drawer_nav_x", "gallery"},
+				"qml": []string{"application", "drawer_nav_x", "gallery"},
 
-				"quick": {"calc"},
+				"quick": []string{"calc"},
 
-				"widgets": {"line_edits", "pixel_editor", "textedit"},
+				"widgets": []string{"line_edits", "pixel_editor", "textedit"},
 			}
 		}
 	}

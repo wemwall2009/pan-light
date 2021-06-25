@@ -3,7 +3,8 @@ package artisan
 import (
 	"errors"
 	"fmt"
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 	"github.com/peterq/pan-light/server/artisan/cache"
 	"github.com/peterq/pan-light/server/conf"
 	"github.com/peterq/pan-light/server/pc-api/middleware"
@@ -12,9 +13,9 @@ import (
 	"time"
 )
 
-func ApiHandler(handler func(ctx iris.Context, param JsonMap) (result interface{}, err error)) func(ctx iris.Context) {
+func ApiHandler(handler func(ctx context.Context, param JsonMap) (result interface{}, err error)) func(ctx context.Context) {
 
-	return func(ctx iris.Context) {
+	return func(ctx context.Context) {
 		var param JsonMap
 		var result interface{}
 
@@ -40,7 +41,7 @@ func ApiHandler(handler func(ctx iris.Context, param JsonMap) (result interface{
 	}
 }
 
-func ApiRecover(ctx iris.Context) {
+func ApiRecover(ctx context.Context) {
 	defer func() {
 		e := recover()
 		if e != nil {
@@ -77,7 +78,7 @@ func ApiRecover(ctx iris.Context) {
 type ThrottleOption struct {
 	Duration time.Duration // 时间窗口
 	Number   int           // 允许操作次数
-	GetKey   func(ctx iris.Context) string
+	GetKey   func(ctx context.Context) string
 }
 
 type throttleState struct {
@@ -85,7 +86,7 @@ type throttleState struct {
 	Water float64 `json:"water"`
 }
 
-func (o ThrottleOption) hit(ctx iris.Context) time.Duration {
+func (o ThrottleOption) hit(ctx context.Context) time.Duration {
 	key := o.GetKey(ctx)
 	stateKey := "throttle-" + key
 
@@ -112,10 +113,10 @@ func (o ThrottleOption) hit(ctx iris.Context) time.Duration {
 }
 
 // 频率限制器, 漏斗算法
-func Throttle(options ...ThrottleOption) func(ctx iris.Context) {
+func Throttle(options ...ThrottleOption) func(ctx context.Context) {
 	for i, option := range options {
 		if option.GetKey == nil {
-			options[i].GetKey = func(ctx iris.Context) string {
+			options[i].GetKey = func(ctx context.Context) string {
 				return strings.Join([]string{
 					ctx.GetCurrentRoute().Name(),
 					middleware.ContextLoginInfo(ctx).Uk(),
@@ -125,7 +126,7 @@ func Throttle(options ...ThrottleOption) func(ctx iris.Context) {
 			}
 		}
 	}
-	return func(ctx iris.Context) {
+	return func(ctx context.Context) {
 		if conf.Conf.Debug {
 			ctx.Next()
 			return

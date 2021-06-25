@@ -2,11 +2,8 @@ package pc_api
 
 import (
 	"fmt"
-	"strings"
-	"time"
-
-	"github.com/kataras/iris/v12"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/kataras/iris/context"
 	"github.com/peterq/pan-light/server/artisan"
 	"github.com/peterq/pan-light/server/artisan/cache"
 	"github.com/peterq/pan-light/server/conf"
@@ -15,11 +12,13 @@ import (
 	"github.com/peterq/pan-light/server/pc-api/middleware"
 	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2"
+	"strings"
+	"time"
 )
 
 type gson = map[string]interface{}
 
-func handleLoginToken(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleLoginToken(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	uk := param.Get("uk").String()
 	filename := artisan.Md5bin([]byte(fmt.Sprint(time.Now().UnixNano())))
 	filename = filename[:8]
@@ -37,7 +36,7 @@ func handleLoginToken(ctx iris.Context, param artisan.JsonMap) (result interface
 	return
 }
 
-func handleLogin(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleLogin(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	link := param.Get("link").String()
 	secret := param.Get("secret").String()
 	token := param.Get("token").String()
@@ -77,7 +76,7 @@ func handleLogin(ctx iris.Context, param artisan.JsonMap) (result interface{}, e
 	return
 }
 
-func handleRefreshToken(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleRefreshToken(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	token := middleware.PcJwtHandler.Get(ctx)
 	claims := token.Claims.(jwt.MapClaims)
 	if claims.VerifyExpiresAt(time.Now().Add(time.Hour*24*5).Unix(), true) {
@@ -91,7 +90,7 @@ func handleRefreshToken(ctx iris.Context, param artisan.JsonMap) (result interfa
 	return
 }
 
-func handleFeedBack(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleFeedBack(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	content := param.Get("content").String()
 	err = dao.FeedbackDao.Insert(dao.FeedbackModel{
 		Uk:      middleware.ContextLoginInfo(ctx).Uk(),
@@ -144,7 +143,7 @@ func getOrSaveByFile(md5, sliceMd5 string, fileSize int64) (data dao.VipSaveFile
 	return
 }
 
-func handleShareToSquare(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleShareToSquare(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	md5 := param.Get("md5").String()
 	sliceMd5 := param.Get("sliceMd5").String()
 	title := param.Get("title").String()
@@ -174,7 +173,7 @@ func handleShareToSquare(ctx iris.Context, param artisan.JsonMap) (result interf
 	return
 }
 
-func handleShareList(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleShareList(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	offset := param.Get("offset").Int64()
 	pageSize := param.Get("pageSize").Int()
 	listType := param.Get("type").String()
@@ -198,7 +197,7 @@ func handleShareList(ctx iris.Context, param artisan.JsonMap) (result interface{
 	return
 }
 
-func handleLinkMd5(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleLinkMd5(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	md5 := param.Get("md5").String()
 	sliceMd5 := param.Get("sliceMd5").String()
 	fileSize := param.Get("fileSize").Int64()
@@ -229,7 +228,7 @@ func handleLinkMd5(ctx iris.Context, param artisan.JsonMap) (result interface{},
 	return
 }
 
-func handleHitShare(ctx iris.Context, param artisan.JsonMap) (result interface{}, err error) {
+func handleHitShare(ctx context.Context, param artisan.JsonMap) (result interface{}, err error) {
 	id := param.Get("id").String()
 	err = dao.FileShareDao.Hit(middleware.ContextLoginInfo(ctx).Uk(), id)
 	return

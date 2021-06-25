@@ -1,10 +1,9 @@
 package rpc
 
 import (
-	"errors"
-	"strings"
-
+	"github.com/kataras/iris/core/errors"
 	"github.com/peterq/pan-light/server/realtime"
+	"strings"
 )
 
 var hostRpcMap = map[string]realtime.RpcHandler{

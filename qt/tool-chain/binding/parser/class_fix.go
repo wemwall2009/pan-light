@@ -182,16 +182,16 @@ func (c *Class) fixLinkage() {
 	case "QtCore":
 		{
 			c.WeakLink = map[string]struct{}{
-				"QtGui":     {},
-				"QtWidgets": {},
+				"QtGui":     struct{}{},
+				"QtWidgets": struct{}{},
 			}
 		}
 
 	case "QtGui":
 		{
 			c.WeakLink = map[string]struct{}{
-				"QtWidgets":    {},
-				"QtMultimedia": {},
+				"QtWidgets":    struct{}{},
+				"QtMultimedia": struct{}{},
 			}
 		}
 	}

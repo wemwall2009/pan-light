@@ -2,7 +2,7 @@ package conf
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris"
 	"gopkg.in/mgo.v2"
 	"os"
 	"strings"
